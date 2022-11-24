@@ -22,7 +22,6 @@ class AudiosController < ApplicationController
     redirect_to audios_path
   end
 
-
   private
 
   def set_audio
@@ -36,5 +35,4 @@ class AudiosController < ApplicationController
     File.open(save_path+"_audio.ogg", 'wb') do |f| f.write audio_data end
     Cloudinary::Uploader.upload(Rails.root.join("public/audio/_audio.ogg"), resource_type: :video, public_id: "SoundTest/audio")
   end
-
 end
