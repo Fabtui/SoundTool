@@ -1,9 +1,7 @@
-
 <% @audios.each do |audio| %>
   <h1><%= audio.title %></h1>
   <audio src=<%= audio.content %> type="audio/mpeg" controls>
     Your browser does not support the audio element.
   </audio>
   <%= link_to 'delete', audio_path(audio), data: {turbo_method: :delete} %>
-
 <% end %>
