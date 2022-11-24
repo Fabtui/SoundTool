@@ -3,6 +3,7 @@ import "@hotwired/turbo-rails"
 import "./controllers"
 import "bootstrap"
 import { audioRecord } from "./pack/audio"
+import { runSpeechRecognition } from './pack/recognition'
 
 // require("@rails/ujs").start()
 // require("turbolinks").start()
@@ -14,3 +15,4 @@ import { audioRecord } from "./pack/audio"
 // });
 
 audioRecord();
+runSpeechRecognition();
