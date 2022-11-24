@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const audioRecord = () => {
   const startRecordingButton = document.getElementById("startRecordingButton");
   const stopRecordingButton = document.getElementById("stopRecordingButton");
@@ -145,8 +147,38 @@ export const audioRecord = () => {
       let audio = new Audio(url);
       console.log(audio);
       console.log(url);
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
       // let reco = webkitSpeechRecognition()
-      // console.log(reco);
+      console.log(recognition);
+  });
+
+    saveButton.addEventListener("click", function () {
+      const csrfToken = document.getElementsByName("csrf-token")[0].content;
+      if (blob == null) {
+          return;
+      }
+      let url = window.URL.createObjectURL(blob);
+      var reader  = new window.FileReader();
+      let savedWAVBlob = null
+      reader.readAsDataURL(blob);
+      reader.onloadend = function() {
+          var base64data = reader.result;
+          savedWAVBlob = base64data
+          axios.post('/audios', {
+            content: savedWAVBlob,
+          }, {
+            headers: {
+            'X-CSRF-Token': csrfToken
+          }})
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
   });
 
 
