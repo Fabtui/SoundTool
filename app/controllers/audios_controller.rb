@@ -22,7 +22,6 @@ class AudiosController < ApplicationController
     redirect_to audios_path
   end
 
-
   private
 
   def set_audio
