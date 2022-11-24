@@ -19,10 +19,10 @@
     <button id="viewButton">View</button>
     <button id="saveButton">Save</button>
     <button id="recoButton">Recognition</button>
-    <%= yield %>
     <%= link_to 'audios', audios_path %>
     <br>
     <p><button type="button" onclick="runSpeechRecognition()">Speech to Text</button> &nbsp; <span id="action"></span></p>
-        <div id="output" class="hide"></div>
+    <div id="output" class="hide"></div>
+    <%= yield %>
   </body>
 </html>

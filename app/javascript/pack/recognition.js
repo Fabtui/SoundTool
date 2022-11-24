@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 export const runSpeechRecognition = () => {
   // get output div reference
   var output = document.getElementById("output");
@@ -23,11 +21,19 @@ export const runSpeechRecognition = () => {
       recognition.onresult = function(event) {
         const transcript = event.results[0][0].transcript;
         const confidence = event.results[0][0].confidence;
-        console.log('confidence', confidence);
-        console.log('transcript', transcript);
+        // console.log('confidence', confidence);
+        // console.log('transcript', transcript);
         if (confidence > 0.8 && transcript == 'audio') {
-          console.log('ok');
           window.location.assign("/audios")
+        }
+        if (confidence > 0.8 && transcript == 'liste') {
+          window.location.assign("/list")
+        }
+        if (confidence > 0.8 && transcript == 'test') {
+          window.location.assign("/test")
+        }
+        if (confidence > 0.8 && transcript == 'ajouter liste') {
+          console.log('ajouter');
         }
           output.innerHTML = "<b>Text:</b> " + transcript + "<br/> <b>Confidence:</b> " + confidence*100+"%";
           output.classList.remove("hide");
