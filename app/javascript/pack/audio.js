@@ -173,7 +173,9 @@ export const audioRecord = () => {
             'X-CSRF-Token': csrfToken
           }})
           .then(function (response) {
-            console.log(response);
+            if (response.status == 204) {
+              location.reload()
+            }
           })
           .catch(function (error) {
             console.log(error);
