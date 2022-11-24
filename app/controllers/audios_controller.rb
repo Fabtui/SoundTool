@@ -8,16 +8,18 @@ class AudiosController < ApplicationController
   end
 
   def create
-    content = set_audio["url"]
+    cloudinary = set_audio
     audio = Audio.new
-    audio.title = Time.now.strftime("%v")
-    audio.content = content
+    audio.title = Time.now.strftime("%c")
+    audio.content = cloudinary["url"]
+    audio.public_id = cloudinary["public_id"]
     audio.save
     redirect_to audios_path
   end
 
   def destroy
     audio = Audio.find(params[:id])
+    Cloudinary::Uploader.destroy(audio.public_id, resource_type: :video)
     audio.destroy
     redirect_to audios_path
   end
@@ -31,6 +33,6 @@ class AudiosController < ApplicationController
     data = params[:content]
     audio_data=Base64.decode64(data['data:audio/ogg;base64,'.length .. -1])
     File.open(save_path+"_audio.ogg", 'wb') do |f| f.write audio_data end
-    Cloudinary::Uploader.upload(Rails.root.join("public/audio/_audio.ogg"), resource_type: :video, public_id: "SoundTest/audio")
+    Cloudinary::Uploader.upload(Rails.root.join("public/audio/_audio.ogg"), resource_type: :video, public_id: "SoundTest/#{Time.now.strftime("%c")}")
   end
 end
