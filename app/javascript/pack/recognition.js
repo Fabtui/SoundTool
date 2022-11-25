@@ -2,7 +2,6 @@ export const runSpeechRecognition = () => {
   const recoButton = document.getElementById("recoButton");
 
   if (recoButton) {
-    console.log('rec');
 
     // get output div reference
     // var output = document.getElementById("output");
@@ -49,7 +48,7 @@ export const runSpeechRecognition = () => {
     // recognition.start();
 
     recoButton.addEventListener("click", function () {
-      const recoLabel = document.getElementById("reco-label");
+      // const recoLabel = document.getElementById("reco-label");
       const recordSign = document.querySelector('.gg-record')
 
       // get action element reference
@@ -59,12 +58,10 @@ export const runSpeechRecognition = () => {
 
     //   // This runs when the speech recognition service starts
       recognition.onstart = function() {
-        console.log('start');
           recordSign.classList.remove('hidden');
       };
 
       recognition.onspeechend = function() {
-        console.log('stop');
           recordSign.classList.add('hidden');
           recognition.stop();
       }
