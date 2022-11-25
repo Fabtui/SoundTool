@@ -4,6 +4,7 @@ import "./controllers"
 import "bootstrap"
 import { audioRecord } from "./pack/audio"
 import { runSpeechRecognition } from './pack/recognition'
+import { speek } from './pack/speek'
 
 // require("@rails/ujs").start()
 // require("turbolinks").start()
@@ -16,3 +17,4 @@ import { runSpeechRecognition } from './pack/recognition'
 
 audioRecord();
 runSpeechRecognition();
+speek();

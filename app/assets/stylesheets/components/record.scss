@@ -1,0 +1,42 @@
+.record-container {
+  display: flex;
+  align-items: center;
+}
+
+#recoButton {
+  margin: 0 30px;
+}
+
+.gg-record {
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  transform: scale(var(--ggs, 1));
+  width: 20px;
+  height: 20px;
+  border: 6px solid transparent;
+  box-shadow: 0 0 0 2px, inset 0 0 0 10px;
+  border-radius: 100px;
+  color: #d81616;
+  animation-name: anim;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}
+
+.gg-record.hidden {
+  display: none;
+}
+
+@keyframes anim {
+  0% {
+    color: #d81616;
+  }
+
+  50% {
+    color: rgba(255, 0, 0, 0);
+  }
+
+  100% {
+    color: #d81616;
+  }
+}

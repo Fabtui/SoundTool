@@ -1,3 +1,13 @@
+<h1>Audio</h1>
+
+<button id="startRecordingButton">Start recording</button>
+<button id="stopRecordingButton">Stop recording</button>
+<button id="playButton">Play</button>
+<button id="downloadButton">Download</button>
+<button id="viewButton">View</button>
+<button id="saveButton">Save</button>
+<button id="speekButton">Speek</button>
+
 <% @audios.each do |audio| %>
   <h1><%= audio.title %></h1>
   <audio src=<%= audio.content %> type="audio/mpeg" controls>
