@@ -1,2 +1,19 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+<h1>Hi! 👋</h1>
+<h1>What do you wan't to do?</h1>
+<div class="home-links">
+<ul>
+  <li><%= link_to 'audios', audios_path %></li>
+  <li><%= link_to 'list', list_path %></li>
+  <li><%= link_to 'test', test_path %></li>
+</ul>
+</div>
+
+<div class="record-container">
+  <button id="recoButton">Recognition</button>
+  <div class="gg-record hidden"></div>
+</div>
+<p id="reco-label"></p>
+
+<%# <br>
+<p><button type="button" onclick="runSpeechRecognition()">Speech to Text</button> &nbsp; <span id="action"></span></p>
+<div id="output" class="hide"></div> %>
