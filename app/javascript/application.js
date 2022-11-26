@@ -4,7 +4,6 @@ import "./controllers"
 import "bootstrap"
 import { audioRecord } from "./pack/audio"
 import { runSpeechRecognition } from './pack/recognition'
-import { speek } from './pack/speek'
 import { addItem } from './pack/add_item'
 import { addList } from './pack/add_list'
 import { listSpeek } from "./pack/list_speek"
@@ -21,7 +20,6 @@ import { listSpeek } from "./pack/list_speek"
 
 audioRecord();
 runSpeechRecognition();
-speek();
 addItem();
 addList();
 listSpeek();
