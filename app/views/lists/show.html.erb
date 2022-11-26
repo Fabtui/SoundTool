@@ -1,0 +1,16 @@
+<h1><%= @list.name %></h1>
+<br>
+<ul>
+  <% @items.each do |item| %>
+    <li>
+      <%= item.name %>
+    </li>
+  <% end %>
+</ul>
+
+
+<div class="record-container">
+  <button  class="record-btn" id="itemRecoButton" data-list-id=<%= @list.id %>>New Item</button>
+  <div class="gg-record hidden"></div>
+</div>
+<%# <p id="reco-label"></p> %>

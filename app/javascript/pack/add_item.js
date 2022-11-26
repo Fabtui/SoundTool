@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-export const list = () => {
-  const listRecoButton = document.getElementById("listRecoButton");
+export const addItem = () => {
+  const itemRecoButton = document.getElementById("itemRecoButton");
 
-  if (listRecoButton) {
-    listRecoButton.addEventListener("click", function () {
-      console.log(('list'));
-      const recoLabel = document.getElementById("reco-label");
+  if (itemRecoButton) {
+
+    itemRecoButton.addEventListener("click", function () {
+      // const recoLabel = document.getElementById("reco-label");
       const recordSign = document.querySelector('.gg-record')
 
       // get action element reference
@@ -31,7 +31,24 @@ export const list = () => {
         // console.log('confidence', confidence);
         // console.log('transcript', transcript);
         if (confidence > 0.8) {
-          console.log(transcript);
+          const csrfToken = document.getElementsByName("csrf-token")[0].content;
+          const listId = itemRecoButton.dataset.listId
+          const url = `/lists/${listId}/items`
+
+          axios.post(url, {
+              name: transcript
+            }, {
+              headers: {
+              'X-CSRF-Token': csrfToken
+            }})
+            .then(function (response) {
+              if (response.status == 204) {
+                location.reload()
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
           // window.location.reload()
         }
       };
