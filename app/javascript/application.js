@@ -7,6 +7,8 @@ import { runSpeechRecognition } from './pack/recognition'
 import { speek } from './pack/speek'
 import { addItem } from './pack/add_item'
 import { addList } from './pack/add_list'
+import { listSpeek } from "./pack/list_speek"
+
 
 // require("@rails/ujs").start()
 // require("turbolinks").start()
@@ -22,3 +24,4 @@ runSpeechRecognition();
 speek();
 addItem();
 addList();
+listSpeek();
