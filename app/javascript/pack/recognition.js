@@ -2,7 +2,6 @@ export const runSpeechRecognition = () => {
   const recoButton = document.getElementById("recoButton");
 
   if (recoButton) {
-    console.log('rec');
 
     // get output div reference
     // var output = document.getElementById("output");
@@ -49,7 +48,7 @@ export const runSpeechRecognition = () => {
     // recognition.start();
 
     recoButton.addEventListener("click", function () {
-      const recoLabel = document.getElementById("reco-label");
+      // const recoLabel = document.getElementById("reco-label");
       const recordSign = document.querySelector('.gg-record')
 
       // get action element reference
@@ -59,12 +58,10 @@ export const runSpeechRecognition = () => {
 
     //   // This runs when the speech recognition service starts
       recognition.onstart = function() {
-        console.log('start');
           recordSign.classList.remove('hidden');
       };
 
       recognition.onspeechend = function() {
-        console.log('stop');
           recordSign.classList.add('hidden');
           recognition.stop();
       }
@@ -73,19 +70,19 @@ export const runSpeechRecognition = () => {
       recognition.onresult = function(event) {
         const transcript = event.results[0][0].transcript;
         const confidence = event.results[0][0].confidence;
-        console.log('confidence', confidence);
-        console.log('transcript', transcript);
+        // console.log('confidence', confidence);
+        // console.log('transcript', transcript);
         if (confidence > 0.8 && transcript == 'audio') {
           window.location.assign("/audios")
         }
         if (confidence > 0.8 && transcript == 'liste') {
-          window.location.assign("/list")
+          window.location.assign("/lists")
         }
         if (confidence > 0.8 && transcript == 'test') {
           window.location.assign("/test")
         }
-        if (confidence > 0.8 && transcript == 'parle') {
-          console.log('end parle');
+        else  {
+          console.log(transcript);
         }
 
       };

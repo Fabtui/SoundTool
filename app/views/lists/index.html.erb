@@ -1,0 +1,11 @@
+<h1>LIST</h1>
+
+<% @lists.each do |list| %>
+  <%= link_to list.name, list_path(list.id) %>
+<% end %>
+
+<div class="record-container">
+  <button  class="record-btn" id="listRecoButton">New List</button>
+  <div class="gg-record hidden"></div>
+</div>
+<%# <p id="reco-label"></p> %>
