@@ -1,8 +1,13 @@
 <h1>LIST</h1>
 
-<% @lists.each do |list| %>
-  <%= link_to list.name, list_path(list.id) %>
-<% end %>
+<ul>
+  <% @lists.each do |list| %>
+    <li>
+    <% items = list.items.pluck(:name).join(',') %>
+      <%= link_to list.name, list_path(list.id) %> <span class="list-speek" data-items=<%= items %>>🔊</span>
+    </li>
+  <% end %>
+</ul>
 
 <div class="record-container">
   <button  class="record-btn" id="listRecoButton">New List</button>
