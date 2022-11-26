@@ -70,19 +70,19 @@ export const runSpeechRecognition = () => {
       recognition.onresult = function(event) {
         const transcript = event.results[0][0].transcript;
         const confidence = event.results[0][0].confidence;
-        console.log('confidence', confidence);
-        console.log('transcript', transcript);
+        // console.log('confidence', confidence);
+        // console.log('transcript', transcript);
         if (confidence > 0.8 && transcript == 'audio') {
           window.location.assign("/audios")
         }
         if (confidence > 0.8 && transcript == 'liste') {
-          window.location.assign("/list")
+          window.location.assign("/lists")
         }
         if (confidence > 0.8 && transcript == 'test') {
           window.location.assign("/test")
         }
-        if (confidence > 0.8 && transcript == 'parle') {
-          console.log('end parle');
+        else  {
+          console.log(transcript);
         }
 
       };
