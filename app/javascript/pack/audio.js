@@ -7,6 +7,7 @@ export const audioRecord = () => {
   const downloadButton = document.getElementById("downloadButton");
   const viewButton = document.getElementById("viewButton");
   const saveButton = document.getElementById("saveButton");
+  const recordSign = document.querySelector('.record-icon')
 
   if (startRecordingButton) {
     let leftchannel = [];
@@ -33,150 +34,151 @@ export const audioRecord = () => {
             audio: true
         },
         function (e) {
-            console.log("user consent");
+          // console.log("user consent");
+          recordSign.classList.add('on-record');
+          console.log(recordSign.classList);;
+          // creates the audio context
+          window.AudioContext = window.AudioContext || window.webkitAudioContext;
+          context = new AudioContext();
 
-            // creates the audio context
-            window.AudioContext = window.AudioContext || window.webkitAudioContext;
-            context = new AudioContext();
+          // creates an audio node from the microphone incoming stream
+          mediaStream = context.createMediaStreamSource(e);
 
-            // creates an audio node from the microphone incoming stream
-            mediaStream = context.createMediaStreamSource(e);
+          // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
+          // bufferSize: the onaudioprocess event is called when the buffer is full
+          let bufferSize = 2048;
+          let numberOfInputChannels = 2;
+          let numberOfOutputChannels = 2;
+          if (context.createScriptProcessor) {
+              recorder = context.createScriptProcessor(bufferSize, numberOfInputChannels, numberOfOutputChannels);
+          } else {
+              recorder = context.createJavaScriptNode(bufferSize, numberOfInputChannels, numberOfOutputChannels);
+          }
 
-            // https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/createScriptProcessor
-            // bufferSize: the onaudioprocess event is called when the buffer is full
-            let bufferSize = 2048;
-            let numberOfInputChannels = 2;
-            let numberOfOutputChannels = 2;
-            if (context.createScriptProcessor) {
-                recorder = context.createScriptProcessor(bufferSize, numberOfInputChannels, numberOfOutputChannels);
-            } else {
-                recorder = context.createJavaScriptNode(bufferSize, numberOfInputChannels, numberOfOutputChannels);
-            }
+          recorder.onaudioprocess = function (e) {
+              leftchannel.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+              rightchannel.push(new Float32Array(e.inputBuffer.getChannelData(1)));
+              recordingLength += bufferSize;
+          }
 
-            recorder.onaudioprocess = function (e) {
-                leftchannel.push(new Float32Array(e.inputBuffer.getChannelData(0)));
-                rightchannel.push(new Float32Array(e.inputBuffer.getChannelData(1)));
-                recordingLength += bufferSize;
-            }
-
-            // we connect the recorder
-            mediaStream.connect(recorder);
-            recorder.connect(context.destination);
-        },
-        function (e) {
-            console.error(e);
-        });
+          // we connect the recorder
+          mediaStream.connect(recorder);
+          recorder.connect(context.destination);
+      },
+      function (e) {
+          console.error(e);
+      });
     });
 
     stopRecordingButton.addEventListener("click", function () {
+      recordSign.classList.remove('on-record')
+      // stop recording
+      recorder.disconnect(context.destination);
+      mediaStream.disconnect(recorder);
 
-        // stop recording
-        recorder.disconnect(context.destination);
-        mediaStream.disconnect(recorder);
+      // we flat the left and right channels down
+      // Float32Array[] => Float32Array
+      let leftBuffer = flattenArray(leftchannel, recordingLength);
+      let rightBuffer = flattenArray(rightchannel, recordingLength);
+      // we interleave both channels together
+      // [left[0],right[0],left[1],right[1],...]
+      let interleaved = interleave(leftBuffer, rightBuffer);
 
-        // we flat the left and right channels down
-        // Float32Array[] => Float32Array
-        let leftBuffer = flattenArray(leftchannel, recordingLength);
-        let rightBuffer = flattenArray(rightchannel, recordingLength);
-        // we interleave both channels together
-        // [left[0],right[0],left[1],right[1],...]
-        let interleaved = interleave(leftBuffer, rightBuffer);
+      // we create our wav file
+      let buffer = new ArrayBuffer(44 + interleaved.length * 2);
+      let view = new DataView(buffer);
 
-        // we create our wav file
-        let buffer = new ArrayBuffer(44 + interleaved.length * 2);
-        let view = new DataView(buffer);
+      // RIFF chunk descriptor
+      writeUTFBytes(view, 0, 'RIFF');
+      view.setUint32(4, 44 + interleaved.length * 2, true);
+      writeUTFBytes(view, 8, 'WAVE');
+      // FMT sub-chunk
+      writeUTFBytes(view, 12, 'fmt ');
+      view.setUint32(16, 16, true); // chunkSize
+      view.setUint16(20, 1, true); // wFormatTag
+      view.setUint16(22, 2, true); // wChannels: stereo (2 channels)
+      view.setUint32(24, sampleRate, true); // dwSamplesPerSec
+      view.setUint32(28, sampleRate * 4, true); // dwAvgBytesPerSec
+      view.setUint16(32, 4, true); // wBlockAlign
+      view.setUint16(34, 16, true); // wBitsPerSample
+      // data sub-chunk
+      writeUTFBytes(view, 36, 'data');
+      view.setUint32(40, interleaved.length * 2, true);
 
-        // RIFF chunk descriptor
-        writeUTFBytes(view, 0, 'RIFF');
-        view.setUint32(4, 44 + interleaved.length * 2, true);
-        writeUTFBytes(view, 8, 'WAVE');
-        // FMT sub-chunk
-        writeUTFBytes(view, 12, 'fmt ');
-        view.setUint32(16, 16, true); // chunkSize
-        view.setUint16(20, 1, true); // wFormatTag
-        view.setUint16(22, 2, true); // wChannels: stereo (2 channels)
-        view.setUint32(24, sampleRate, true); // dwSamplesPerSec
-        view.setUint32(28, sampleRate * 4, true); // dwAvgBytesPerSec
-        view.setUint16(32, 4, true); // wBlockAlign
-        view.setUint16(34, 16, true); // wBitsPerSample
-        // data sub-chunk
-        writeUTFBytes(view, 36, 'data');
-        view.setUint32(40, interleaved.length * 2, true);
+      // write the PCM samples
+      let index = 44;
+      let volume = 1;
+      for (let i = 0; i < interleaved.length; i++) {
+          view.setInt16(index, interleaved[i] * (0x7FFF * volume), true);
+          index += 2;
+      }
 
-        // write the PCM samples
-        let index = 44;
-        let volume = 1;
-        for (let i = 0; i < interleaved.length; i++) {
-            view.setInt16(index, interleaved[i] * (0x7FFF * volume), true);
-            index += 2;
-        }
-
-        // our final blob
-        blob = new Blob([view], { type: 'audio/wav' });
+      // our final blob
+      blob = new Blob([view], { type: 'audio/wav' });
     });
 
     playButton.addEventListener("click", function () {
-        if (blob == null) {
-            return;
-        }
-        let url = window.URL.createObjectURL(blob);
-        let audio = new Audio(url);
-        audio.play();
+      if (blob == null) {
+          return;
+      }
+      let url = window.URL.createObjectURL(blob);
+      let audio = new Audio(url);
+      audio.play();
     });
 
     downloadButton.addEventListener("click", function () {
-        if (blob == null) {
-            return;
-        }
+      if (blob == null) {
+          return;
+      }
 
-        let url = URL.createObjectURL(blob);
+      let url = URL.createObjectURL(blob);
 
-        let a = document.createElement("a");
-        document.body.appendChild(a);
-        a.style = "display: none";
-        a.href = url;
-        a.download = "sample.wav";
-        a.click();
-        window.URL.revokeObjectURL(url);
+      let a = document.createElement("a");
+      document.body.appendChild(a);
+      a.style = "display: none";
+      a.href = url;
+      a.download = "sample.wav";
+      a.click();
+      window.URL.revokeObjectURL(url);
     });
 
     viewButton.addEventListener("click", function () {
-        if (blob == null) {
-            return;
-        }
-        let url = window.URL.createObjectURL(blob);
-        let audio = new Audio(url);
-        console.log(audio);
-        console.log(url);
+      if (blob == null) {
+          return;
+      }
+      let url = window.URL.createObjectURL(blob);
+      let audio = new Audio(url);
+      console.log(audio);
+      console.log(url);
     });
 
-      saveButton.addEventListener("click", function () {
-        const csrfToken = document.getElementsByName("csrf-token")[0].content;
-        if (blob == null) {
-            return;
-        }
-        let url = window.URL.createObjectURL(blob);
-        var reader  = new window.FileReader();
-        let savedWAVBlob = null
-        reader.readAsDataURL(blob);
-        reader.onloadend = function() {
-            var base64data = reader.result;
-            savedWAVBlob = base64data
-            axios.post('/audios', {
-              content: savedWAVBlob,
-            }, {
-              headers: {
-              'X-CSRF-Token': csrfToken
-            }})
-            .then(function (response) {
-              if (response.status == 204) {
-                location.reload()
-              }
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-        }
+    saveButton.addEventListener("click", function () {
+      const csrfToken = document.getElementsByName("csrf-token")[0].content;
+      if (blob == null) {
+          return;
+      }
+      // let url = window.URL.createObjectURL(blob);
+      let reader  = new window.FileReader();
+      let savedWAVBlob = null
+      reader.readAsDataURL(blob);
+      reader.onloadend = function() {
+        let base64data = reader.result;
+        savedWAVBlob = base64data
+        axios.post('/audios', {
+          content: savedWAVBlob,
+        }, {
+          headers: {
+          'X-CSRF-Token': csrfToken
+        }})
+        .then(function (response) {
+          if (response.status == 204) {
+            location.reload()
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
     });
 
     function flattenArray(channelBuffer, recordingLength) {

@@ -1,12 +1,14 @@
 <h1>Audio</h1>
 
-<button id="startRecordingButton">Start recording</button>
-<button id="stopRecordingButton">Stop recording</button>
-<button id="playButton">Play</button>
-<button id="downloadButton">Download</button>
-<button id="viewButton">View</button>
-<button id="saveButton">Save</button>
-<button id="speekButton">Speek</button>
+<div class="recorder-container">
+  <div class="recorder-btn record-icon" id="startRecordingButton"><i class="fa-solid fa-record-vinyl"></i></div>
+  <div class="recorder-btn" id="stopRecordingButton"><i class="fa-solid fa-stop"></i></div>
+  <div class="recorder-btn" id="playButton"><i class="fa-solid fa-play"></i></div>
+  <div class="recorder-btn" id="downloadButton"><i class="fa-solid fa-circle-down"></i></div>
+  <div class="recorder-btn" id="viewButton"><i class="fa-solid fa-eye"></i></div>
+  <div class="recorder-btn" id="saveButton"><i class="fa-solid fa-floppy-disk"></i></div>
+  <div class="gg-record hidden"></div>
+</div>
 
 <% @audios.each do |audio| %>
   <h1><%= audio.title %></h1>

@@ -58,12 +58,12 @@ export const runSpeechRecognition = () => {
 
     //   // This runs when the speech recognition service starts
       recognition.onstart = function() {
-          recordSign.classList.remove('hidden');
+        recordSign.classList.remove('hidden');
       };
 
       recognition.onspeechend = function() {
-          recordSign.classList.add('hidden');
-          recognition.stop();
+        recordSign.classList.add('hidden');
+        recognition.stop();
       }
 
     //   // This runs when the speech recognition service returns result
